@@ -36,43 +36,64 @@ dyno.RAP = .1
 d.put(dyno)
 time.sleep(2)
 
+UL = 5
+LL = 5
+
+H = 9.5
+
+def dH(H):
+	thetah = -m.acos((H/2)/UL)
+	thetak = m.pi - 2*(m.pi/2 - thetah)
+	thetaa = 0 + thetah - thetak
+	
+	A = [thetah , thetak , thetaa]
+	
+	return A
+	
+
 while(1):
 	
 	[statuss, framesizes] = c.get(controller, wait=True, last=True)
 	
 	if (controller.direction == ci.FORWARD):
 		print '\nMoving Fowrad ...'
-		dyno.LHP = -1
-		dyno.LKP = -2
-		dyno.LAP = 1
+		H = H-.1
 		
-		dyno.RHP = -1
-		dyno.RKP = -2
-		dyno.RAP = 1
-		
-		d.put(dyno)
-		time.sleep(1)
+		A = dH(H)
 
-		dyno.CHP = -.2
-		dyno.CKP = -.4
-		dyno.CAP = .2
+		dyno.CHP = A[0]
+		dyno.CKP = A[1]
+		dyno.CAP = A[2]
+		
+		dyno.RHP = A[0]
+		dyno.RKP = A[1]
+		dyno.RAP = A[2]
+		
+		dyno.LHP = A[0]
+		dyno.LKP = A[1]
+		dyno.LAP = A[2]
 		d.put(dyno)
 
 		
 			
 	elif (controller.direction == ci.REVERSE):
 		print '\nMoving Backward ...'
+		'''
 		dyno.LHP = -.2
 		dyno.LKP = -.4
 		dyno.LAP = .2
 
-		dyno.CHP = -1
+		dyno.CHP = -1 
 		dyno.CKP = -2
-		dyno.CAP = 1
+		dyno.CAP = 0 - dyno.CHP + dyno.CKP
 
 		dyno.RHP = -.2
 		dyno.RKP = -.4
 		dyno.RAP = .2
+		'''
+		dyno.CHP = -.9
+		dyno.CKP = -.2
+		dyno.CAP = 0 - dyno.CKP + dyno.CHP
 		
 		d.put(dyno)
 
@@ -104,4 +125,5 @@ while(1):
 		dyno.RAP = 0
 		
 		d.put(dyno)
+		H = 10
 	
