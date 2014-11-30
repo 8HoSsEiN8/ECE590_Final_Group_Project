@@ -10,11 +10,16 @@ import numpy as np
 import ach
 import math as m
 
-
 import controller_include as ci
 import dyno_include as di
 
+c = ach.Channel(ci.CONTROLLER_REF_NAME)
+controller = ci.KEY_REF()
+c.flush()
 
+d = ach.Channel(di.DYNO_REF_NAME)
+dyno = di.DYNO_REF()
+d.flush()
 
 UL = 5.0
 LL = 5.0
@@ -273,55 +278,17 @@ def stepBack():
 	
 	squatAll()
 
-
-
-c = ach.Channel(ci.CONTROLLER_REF_NAME)
-controller 	= ci.KEY_REF()
-c.flush()
-
-d = ach.Channel(di.DYNO_REF_NAME)
-dyno 		= di.DYNO_REF()
-d.flush()
-
+#start program
 squat = dH(9)
+zero()
+time.sleep(.5)
+squatAll()
 
-dyno.LHP = -.1
-dyno.LKP = -.2
-dyno.LAP = .1
+#stepForward()
+#turn(-1)
+stepBack()
+#turn(1)
 
-dyno.CHP = -.1
-dyno.CKP = -.2
-dyno.CAP = .1
+#while(1):
+	#stepForward()
 
-dyno.RHP = -.1
-dyno.RKP = -.2
-dyno.RAP = .1
-
-d.put(dyno)
-time.sleep(2)
-
-
-while(1):
-	
-	[statuss, framesizes] = c.get(controller, wait=True, last=True)
-	
-	if (controller.direction == ci.FORWARD):
-		print '\nMoving Fowrad ...'
-		stepForward()		
-			
-	elif (controller.direction == ci.REVERSE):
-		print '\nMoving Backward ...'
-		stepBack()
-
-	elif (controller.direction == ci.RIGHT):
-		print '\nTurning Right ...'
-		turn(1)
-
-	elif (controller.direction == ci.LEFT):
-		print '\nTurning Left ...'
-		turn(-1)
-
-	elif (controller.direction == ci.STOP):
-		print '\nStopped'
-		zero()
-	
